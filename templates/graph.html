@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Charts</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        /* Add your CSS styles for the navbar here */
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .navbar-title {
+            color: white;
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .navbar-links {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .navbar-link {
+            margin-left: 10px;
+        }
+
+        .navbar-link a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+        }
+
+        .navbar-link a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1 class="navbar-title">CSV Data Charts</h1>
+        <ul class="navbar-links">
+            <li class="navbar-link"><a id="index-link">Index</a></li>
+            <li class="navbar-link"><a id="custom-link">Custom</a></li>
+            <li class="navbar-link"><a id="dashboard-link">Dashboard</a></li>
+        </ul>
+    </div>
+
+    <div id="test_chart" style="width: 900px; height: 500px;"></div>
+    <div id="test_description"></div>
+    <div id="train_chart" style="width: 900px; height: 500px;"></div>
+    <div id="train_description"></div>
+    <div id="metrics_chart" style="width: 900px; height: 500px;"></div>
+    <div id="metrics_description"></div>
+
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            function loadCSV(url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            callback(xhr.responseText);
+                        } else {
+                            console.error('Failed to load CSV: ' + url);
+                        }
+                    }
+                };
+                xhr.open("GET", url, true);
+                xhr.send();
+            }
+
+            function parseCSVData(csvData) {
+                var rows = csvData.trim().split('\n');
+                var header = rows.shift(); // Remove the first row (header)
+                var data = rows.map(function(row) {
+                    return row.split(',').map(function(value) {
+                        return isNaN(parseFloat(value)) ? value : parseFloat(value);
+                    });
+                });
+                // Insert headers back into the data
+                data.unshift(header.split(','));
+                return data;
+            }
+
+            // Load and parse actual vs predicted test data
+            loadCSV('../static/actual_vs_predicted_test.csv', function(response) {
+                var testData = parseCSVData(response);
+                if (testData[0].length === 2) {
+                    var testChart = new google.visualization.LineChart(document.getElementById('test_chart'));
+                    testChart.draw(google.visualization.arrayToDataTable(testData), {
+                        title: 'Actual vs Predicted (Test Data)',
+                        curveType: 'function',
+                        legend: { position: 'bottom' }
+                    });
+                    addDescription('test_description', 'This chart displays the actual vs predicted values for the test data.');
+                } else {
+                    console.error('Invalid number of columns in actual vs predicted test data.');
+                }
+            });
+
+            // Load and parse actual vs predicted train data
+            loadCSV('../static/actual_vs_predicted_train.csv', function(response){
+                var trainData = parseCSVData(response);
+                if (trainData[0].length === 2) {
+                    var trainChart = new google.visualization.LineChart(document.getElementById('train_chart'));
+                    trainChart.draw(google.visualization.arrayToDataTable(trainData), {
+                        title: 'Actual vs Predicted (Train Data)',
+                        curveType: 'function',
+                        legend: { position: 'bottom' }
+                    });
+                    addDescription('train_description', 'This chart displays the actual vs predicted values for the train data.');
+                } else {
+                    console.error('Invalid number of columns in actual vs predicted train data.');
+                }
+            });
+
+            // Load and parse evaluation metrics data
+            loadCSV('../static/evaluation_metrics.csv', function(response) {
+                var metricsData = parseCSVData(response);
+                if (metricsData[0].length === 3) {
+                    var metricsChart = new google.visualization.ColumnChart(document.getElementById('metrics_chart'));
+                    metricsChart.draw(google.visualization.arrayToDataTable(metricsData), {
+                        title: 'Evaluation Metrics',
+                        legend: { position: 'bottom' },
+                        vAxis: { title: metricsData[0][1] },
+                        hAxis: { title: metricsData[0][0] + ' and ' + metricsData[0][2] }
+                    });
+                    addDescription('metrics_description', 'This chart displays the evaluation metrics.');
+                } else {
+                                    console.error('Invalid number of columns in evaluation metrics data.');
+                }
+            });
+
+            function addDescription(elementId, description) {
+                var element = document.getElementById(elementId);
+                element.textContent = description;
+            }
+
+            // Routing for navbar items
+            document.getElementById('index-link').addEventListener('click', function() {
+                window.location.href = '/index';
+            });
+
+            document.getElementById('custom-link').addEventListener('click', function() {
+                window.location.href = '/';
+            });
+
+            document.getElementById('dashboard-link').addEventListener('click', function() {
+                window.location.href = '/dash';
+            });
+        }
+    </script>
+</body>
+</html>

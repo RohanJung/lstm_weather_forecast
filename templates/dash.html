@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../static/new.css">
+
+</head>
+<body>
+<div class="grid-container">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="menu-icon" onclick="openSidebar()">
+            <span class="material-icons-outlined">menu</span>
+        </div>
+        <div class="header-left">
+            <span class="material-icons-outlined">search</span>
+        </div>
+        <div class="header-right">
+            <span class="material-icons-outlined clickable" id="notifications">notifications</span>
+            <span class="material-icons-outlined clickable" id="email">email</span>
+            <span class="material-icons-outlined clickable" id="account" onclick="openLoginModal()">account_circle</span>
+        </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-title">
+            <div class="sidebar-brand">
+                <span class="material-icons-outlined">inventory</span> Weather forecasting System
+            </div>
+            <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+
+        <ul class="sidebar-list">
+            <li class="sidebar-list-item dashboard-link">
+                <span class="material-icons-outlined">dashboard</span> Dashboard
+            </li>
+            <li class="sidebar-list-item weather-forecast-link">
+                <span class="material-icons-outlined">inventory_2</span> Weather forecast
+            </li>
+            <li class="sidebar-list-item custom-forecast-link">
+                <span class="material-icons-outlined">fact_check</span> Custom forecast
+            </li>
+            <li class="sidebar-list-item graphs-link">
+                <span class="material-icons-outlined">add_shopping_cart</span> Graphs
+            </li>
+            <li class="sidebar-list-item features-link">
+                <span class="material-icons-outlined">shopping_cart</span> Features
+            </li>
+            <li class="sidebar-list-item reports-link">
+                <span class="material-icons-outlined">poll</span> Reports
+            </li>
+            <li class="sidebar-list-item settings-link">
+                <span class="material-icons-outlined">settings</span> Settings
+            </li>
+        </ul>
+    </aside>
+    <!-- End Sidebar -->
+
+    <!-- Main -->
+    <main class="main-container">
+        <div class="main-title">
+            <p class="font-weight-bold">DASHBOARD</p>
+        </div>
+
+        <div class="main-cards">
+
+            <div class="card">
+                <div class="card-inner">
+                    <p class="text-primary">Input features</p>
+                    <span class="material-icons-outlined text-blue">inventory_2</span>
+                </div>
+                <span class="text-primary font-weight-bold">249</span>
+            </div>
+
+            <div class="card">
+                <div class="card-inner">
+                    <p class="text-primary">Output feature</p>
+                    <span class="material-icons-outlined text-orange">add_shopping_cart</span>
+                </div>
+                <span class="text-primary font-weight-bold">83</span>
+            </div>
+
+            <div class="card">
+                <div class="card-inner">
+                    <p class="text-primary">Train time</p>
+                    <span class="material-icons-outlined text-green">shopping_cart</span>
+                </div>
+                <span class="text-primary font-weight-bold">79</span>
+            </div>
+
+            <div class="card">
+                <div class="card-inner">
+                    <p class="text-primary">Test time</p>
+                    <span class="material-icons-outlined text-red">notification_important</span>
+                </div>
+                <span class="text-primary font-weight-bold">56</span>
+            </div>
+
+        </div>
+
+        <div class="charts">
+
+            <div class="charts-card">
+                <p class="chart-title">This weeks forecast</p>
+                <div id="bar-chart"></div>
+            </div>
+
+            <div class="charts-card">
+                <p class="chart-title">This Months forecast</p>
+                <div id="area-chart"></div>
+            </div>
+
+        </div>
+    </main>
+    <!-- End Main -->
+</div>
+    <!-- Login Modal -->
+    <div id="id01" class="modal">
+
+        <form class="modal-content animate" action="/action_page.php" method="post">
+          <div class="imgcontainer">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <img src="img_avatar2.png" alt="Avatar" class="avatar">
+          </div>
+
+          <div class="container">
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+
+            <button type="submit">Login</button>
+            <label>
+              <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+          </div>
+
+          <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+            <span class="psw">Forgot <a href="#">password?</a></span>
+          </div>
+        </form>
+      </div>
+
+
+
+<!-- Scripts -->
+<!-- ApexCharts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.3/apexcharts.min.js"></script>
+<!-- Custom JS -->
+<script src="../static/new.js"></script>
+
+<script>
+    // Open the login modal
+    function openLoginModal() {
+    console.log("opened")
+        document.getElementById('id01').style.display = 'block';
+    }
+
+    // Close the login modal
+    function closeLoginModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
+
+    // Function to navigate to the dashboard page
+    const dashboardLink = document.querySelector('.dashboard-link');
+    dashboardLink.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+
+    // Function to navigate to the weather forecast page
+    const weatherForecastLink = document.querySelector('.weather-forecast-link');
+    weatherForecastLink.addEventListener('click', () => {
+        // Add the URL of the weather forecast page here
+        window.location.href = '/index';
+    });
+
+    // Function to navigate to the custom forecast page
+    const customForecastLink = document.querySelector('.custom-forecast-link');
+    customForecastLink.addEventListener('click', () => {
+        // Add the URL of the custom forecast page here
+        window.location.href = '/dashboard';
+    });
+
+    // Function to navigate to the graphs page
+    const graphsLink = document.querySelector('.graphs-link');
+    graphsLink.addEventListener('click', () => {
+        // Add the URL of the graphs page here
+        window.location.href = '/graph';
+    });
+</script>
+
+</body>
+</html>
